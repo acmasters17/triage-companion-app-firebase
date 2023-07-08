@@ -20,13 +20,23 @@ module.exports = {
   ignorePatterns: [
     "/lib/**/*", // Ignore built files.
   ],
-  plugins: [
-    "@typescript-eslint",
-    "import",
-  ],
+  plugins: ["@typescript-eslint", "import"],
   rules: {
     "quotes": ["error", "double"],
     "import/no-unresolved": 0,
     "indent": ["error", 2],
+
+    "require-jsdoc": [
+      "error",
+      {
+        require: {
+          FunctionDeclaration: false,
+          MethodDefinition: false,
+          ClassDeclaration: false,
+          ArrowFunctionExpression: false,
+          FunctionExpression: false,
+        },
+      },
+    ],
   },
 };

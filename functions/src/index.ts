@@ -9,6 +9,8 @@
 
 import {HttpsError, onCall, onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
+import {createLab} from "./lab-management";
+
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -61,3 +63,5 @@ export const testAuthenticated = onCall((request) => {
   return {uid: uid, name: name, picture: picture, email: email};
 });
 // [END v2messageFunctionTrigger]
+
+export {createLab};
