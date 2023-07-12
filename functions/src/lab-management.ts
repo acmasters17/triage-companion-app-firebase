@@ -1,10 +1,14 @@
-import {HttpsError, onCall} from "firebase-functions/v2/https";
+import {
+  CallableRequest,
+  HttpsError,
+  onCall,
+} from "firebase-functions/v2/https";
 import {getUserSID, isUserLoggedIn} from "./auth-utilities";
 import {getFirestore} from "firebase-admin/firestore";
+import * as logger from "firebase-functions/logger";
 
-// All functions related to creating, requesting access
-// and managing access to labs
-export const createLab = onCall(async (request) => {
+// returns lab name
+function userLoggedInAndLabNameExists(request: CallableRequest<any>) {
   // Checking that the user is authenticated.
   if (!isUserLoggedIn(request)) {
     throw new HttpsError(
@@ -22,6 +26,16 @@ export const createLab = onCall(async (request) => {
       "the function must be passed a labName."
     );
   }
+
+  return unSanLabName;
+}
+
+// All functions related to creating, requesting access
+// and managing access to labs
+export const createLab = onCall(async (request) => {
+  // call prerequistes to check that the request is valid
+  // will throw an error otherwise
+  const unSanLabName = userLoggedInAndLabNameExists(request);
 
   // safe initialise if needed and get firestore
   const firestore = getFirestore();
@@ -53,4 +67,76 @@ export const createLab = onCall(async (request) => {
   }
 
   return {sanLabName};
+});
+
+// take a lab name and add user to labs users
+export const reqToJoinLab = onCall(async (request) => {
+  // call prerequistes to check that the request is valid
+  // will throw an error otherwise
+  const unSanLabName = userLoggedInAndLabNameExists(request);
+  // safe initialise if needed and get firestore
+  const firestore = getFirestore();
+
+  // sanitise lab name and check if doesnt already exist
+  const sanLabName = unSanLabName.replace(/\s+/g, "-").toLowerCase();
+
+  logger.info("Requesting to join - " + sanLabName, {structuredData: true});
+
+  const newLabReference = firestore.collection("labs").doc(sanLabName);
+
+  // attempt get
+  const docSnapshot = await newLabReference.get();
+
+  // if exists merge the new user in
+  if (docSnapshot.exists) {
+    // create a lab
+    const userSID = getUserSID(request);
+    logger.info(docSnapshot.get("users"), {structuredData: true});
+    await newLabReference.set(
+      {
+        users: [...docSnapshot.get("users"), {id: userSID, approved: false}],
+      },
+      {merge: true}
+    );
+  } else {
+    // if doesnt exist throw an error
+    throw new HttpsError(
+      "not-found",
+      "Sorry this lab name doesn't exist - please seek the lab owner"
+    );
+  }
+
+  return {sanLabName};
+});
+
+// take a lab name and user sid and check if field is true
+export const checkIfLabRequestApproved = onCall(async (request) => {
+  throw new HttpsError(
+    "already-exists",
+    "Sorry this lab name already exists"
+  );
+});
+
+// for a given lab get all the users
+export const getLabUsers = onCall(async (request) => {
+  throw new HttpsError(
+    "already-exists",
+    "Sorry this lab name already exists"
+  );
+});
+
+// delete a user for a lab (Reject will also call this)
+export const removeUserFromLab = onCall(async (request) => {
+  throw new HttpsError(
+    "already-exists",
+    "Sorry this lab name already exists"
+  );
+});
+
+// approves a given user in a lab
+export const approveUserInLab = onCall(async (request) => {
+  throw new HttpsError(
+    "already-exists",
+    "Sorry this lab name already exists"
+  );
 });
