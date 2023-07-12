@@ -5,7 +5,7 @@ import {
 } from "firebase-functions/v2/https";
 import {getUserSID, isUserLoggedIn} from "./auth-utilities";
 import {getFirestore} from "firebase-admin/firestore";
-import * as logger from "firebase-functions/logger";
+// import * as logger from "firebase-functions/logger";
 
 // returns lab name
 function userLoggedInAndLabNameExists(request: CallableRequest<any>) {
@@ -80,8 +80,6 @@ export const reqToJoinLab = onCall(async (request) => {
   // sanitise lab name and check if doesnt already exist
   const sanLabName = unSanLabName.replace(/\s+/g, "-").toLowerCase();
 
-  logger.info("Requesting to join - " + sanLabName, {structuredData: true});
-
   const newLabReference = firestore.collection("labs").doc(sanLabName);
 
   // attempt get
@@ -91,7 +89,6 @@ export const reqToJoinLab = onCall(async (request) => {
   if (docSnapshot.exists) {
     // create a lab
     const userSID = getUserSID(request);
-    logger.info(docSnapshot.get("users"), {structuredData: true});
     await newLabReference.set(
       {
         users: [...docSnapshot.get("users"), {id: userSID, approved: false}],
@@ -110,33 +107,82 @@ export const reqToJoinLab = onCall(async (request) => {
 });
 
 // take a lab name and user sid and check if field is true
+// returns approval field
 export const checkIfLabRequestApproved = onCall(async (request) => {
-  throw new HttpsError(
-    "already-exists",
-    "Sorry this lab name already exists"
-  );
+  // call prerequistes to check that the request is valid
+  // will throw an error otherwise
+  const unSanLabName = userLoggedInAndLabNameExists(request);
+  // safe initialise if needed and get firestore
+  const firestore = getFirestore();
+
+  // sanitise lab name and check if doesnt already exist
+  const sanLabName = unSanLabName.replace(/\s+/g, "-").toLowerCase();
+
+  const labReference = firestore.collection("labs").doc(sanLabName);
+
+  // attempt get
+  const docSnapshot = await labReference.get();
+
+  // if exists find user within users and return approved field
+  if (docSnapshot.exists) {
+    const users: [any] = docSnapshot.get("users");
+    const requestingUserSid = getUserSID(request);
+
+    const resultingUser = users.find((user) => user.id === requestingUserSid);
+
+    if (!resultingUser) {
+      // user not found in requested lab
+      throw new HttpsError(
+        "not-found",
+        "Sorry this user cannot be found - please contact your lab head"
+      );
+    } else {
+      // user exists so return approval status
+      return {approved: resultingUser.approved};
+    }
+  } else {
+    // if doesnt exist throw an error
+    throw new HttpsError(
+      "not-found",
+      "Sorry this lab name doesn't exist - please request help from developer"
+    );
+  }
 });
 
 // for a given lab get all the users
 export const getLabUsers = onCall(async (request) => {
-  throw new HttpsError(
-    "already-exists",
-    "Sorry this lab name already exists"
-  );
+  // call prerequistes to check that the request is valid
+  // will throw an error otherwise
+  const unSanLabName = userLoggedInAndLabNameExists(request);
+  // safe initialise if needed and get firestore
+  const firestore = getFirestore();
+
+  // sanitise lab name and check if doesnt already exist
+  const sanLabName = unSanLabName.replace(/\s+/g, "-").toLowerCase();
+
+  const labReference = firestore.collection("labs").doc(sanLabName);
+
+  // attempt get
+  const docSnapshot = await labReference.get();
+
+  // if exists return users
+  if (docSnapshot.exists) {
+    return {users: docSnapshot.get("users")};
+  } else {
+    // if doesnt exist throw an error
+    throw new HttpsError(
+      "not-found",
+      "Sorry this lab name doesn't exist - please request help from developer"
+    );
+  }
 });
 
 // delete a user for a lab (Reject will also call this)
 export const removeUserFromLab = onCall(async (request) => {
-  throw new HttpsError(
-    "already-exists",
-    "Sorry this lab name already exists"
-  );
+  throw new HttpsError("already-exists", "Sorry this lab name already exists");
 });
 
 // approves a given user in a lab
 export const approveUserInLab = onCall(async (request) => {
-  throw new HttpsError(
-    "already-exists",
-    "Sorry this lab name already exists"
-  );
+  throw new HttpsError("already-exists", "Sorry this lab name already exists");
 });
