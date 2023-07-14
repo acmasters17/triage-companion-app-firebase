@@ -184,10 +184,92 @@ export const getLabUsers = onCall(async (request) => {
 
 // delete a user for a lab (Reject will also call this)
 export const removeUserFromLab = onCall(async (request) => {
-  throw new HttpsError("already-exists", "Sorry this lab name already exists");
+  // call prerequistes to check that the request is valid
+  // will throw an error otherwise
+  const unSanLabName = userLoggedInAndLabNameExists(request);
+
+  const sidToDelete = request.data.id;
+
+  if (!(typeof sidToDelete === "string") || sidToDelete.length === 0) {
+    // Throwing an HttpsError so that the client gets the error details.
+    throw new HttpsError(
+      "invalid-argument",
+      "the function must be passed a user id to delete"
+    );
+  }
+
+  // safe initialise if needed and get firestore
+  const firestore = getFirestore();
+
+  // sanitise lab name and check if doesnt already exist
+  const sanLabName = unSanLabName.replace(/\s+/g, "-").toLowerCase();
+
+  const labReference = firestore.collection("labs").doc(sanLabName);
+
+  // attempt get
+  const docSnapshot = await labReference.get();
+
+  // if exists find user within users and return approved field
+  if (docSnapshot.exists) {
+    const users: [any] = docSnapshot.get("users");
+    const newUsers = users.filter((user) => user.id !== sidToDelete);
+
+    await labReference.set({users: newUsers}, {merge: true});
+
+    return {success: true};
+  } else {
+    // if doesnt exist throw an error
+    throw new HttpsError(
+      "not-found",
+      "Sorry this lab name doesn't exist - please request help from developer"
+    );
+  }
 });
 
 // approves a given user in a lab
 export const approveUserInLab = onCall(async (request) => {
-  throw new HttpsError("already-exists", "Sorry this lab name already exists");
+  // call prerequistes to check that the request is valid
+  // will throw an error otherwise
+  const unSanLabName = userLoggedInAndLabNameExists(request);
+
+  const sidToApprove = request.data.id;
+
+  if (!(typeof sidToApprove === "string") || sidToApprove.length === 0) {
+    // Throwing an HttpsError so that the client gets the error details.
+    throw new HttpsError(
+      "invalid-argument",
+      "the function must be passed a user id to approve"
+    );
+  }
+
+  // safe initialise if needed and get firestore
+  const firestore = getFirestore();
+
+  // sanitise lab name and check if doesnt already exist
+  const sanLabName = unSanLabName.replace(/\s+/g, "-").toLowerCase();
+
+  const labReference = firestore.collection("labs").doc(sanLabName);
+
+  // attempt get
+  const docSnapshot = await labReference.get();
+
+  // if exists find user within users and return approved field
+  if (docSnapshot.exists) {
+    const users: [any] = docSnapshot.get("users");
+    const userToApprove = users.find((user) => user.id === sidToApprove);
+    const newApprovedUser = {...userToApprove, ...{approved: true}};
+    const newUsers = users
+      .filter((user) => user.id !== sidToApprove)
+      .concat([newApprovedUser]);
+
+    await labReference.set({users: newUsers}, {merge: true});
+
+    return {success: true};
+  } else {
+    // if doesnt exist throw an error
+    throw new HttpsError(
+      "not-found",
+      "Sorry this lab name doesn't exist - please request help from developer"
+    );
+  }
 });
