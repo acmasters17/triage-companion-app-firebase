@@ -3,7 +3,7 @@ import {
   HttpsError,
   onCall,
 } from "firebase-functions/v2/https";
-import {getUserSID, isUserLoggedIn} from "./auth-utilities";
+import {getUserEmail, getUserSID, isUserLoggedIn} from "./auth-utilities";
 import {getFirestore} from "firebase-admin/firestore";
 // import * as logger from "firebase-functions/logger";
 
@@ -57,12 +57,13 @@ export const createLab = onCall(async (request) => {
   } else {
     // create a lab
     const userSID = getUserSID(request);
+    const userEmail = getUserEmail(request);
     await newLabReference.set({
       id: sanLabName,
       name: unSanLabName,
       owner: userSID,
       sop: "",
-      users: [{id: userSID, approved: true}],
+      users: [{id: userSID, email: userEmail, approved: true}],
     });
   }
 
@@ -89,9 +90,13 @@ export const reqToJoinLab = onCall(async (request) => {
   if (docSnapshot.exists) {
     // create a lab
     const userSID = getUserSID(request);
+    const userEmail = getUserEmail(request);
     await newLabReference.set(
       {
-        users: [...docSnapshot.get("users"), {id: userSID, approved: false}],
+        users: [
+          ...docSnapshot.get("users"),
+          {id: userSID, email: userEmail, approved: false},
+        ],
       },
       {merge: true}
     );

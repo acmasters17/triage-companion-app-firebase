@@ -10,3 +10,8 @@ export function isUserLoggedIn(request: CallableRequest<any>) {
 export function getUserSID(request: CallableRequest<any>) {
   return request.auth!.uid;
 }
+
+// assums isUserLoggedIn alredy called
+export function getUserEmail(request: CallableRequest<any>) {
+  return request.auth!.token.email ? request.auth!.token.email : "";
+}
