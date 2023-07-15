@@ -1,34 +1,11 @@
+import {HttpsError, onCall} from "firebase-functions/v2/https";
 import {
-  CallableRequest,
-  HttpsError,
-  onCall,
-} from "firebase-functions/v2/https";
-import {getUserEmail, getUserSID, isUserLoggedIn} from "./auth-utilities";
+  getUserEmail,
+  getUserSID,
+  userLoggedInAndLabNameExists,
+} from "./auth-utilities";
 import {getFirestore} from "firebase-admin/firestore";
 // import * as logger from "firebase-functions/logger";
-
-// returns lab name
-function userLoggedInAndLabNameExists(request: CallableRequest<any>) {
-  // Checking that the user is authenticated.
-  if (!isUserLoggedIn(request)) {
-    throw new HttpsError(
-      "failed-precondition",
-      "You must be logged in to create a lab."
-    );
-  }
-
-  const unSanLabName = request.data.labName;
-  // Checking unsanitised lab name exists in request.
-  if (!(typeof unSanLabName === "string") || unSanLabName.length === 0) {
-    // Throwing an HttpsError so that the client gets the error details.
-    throw new HttpsError(
-      "invalid-argument",
-      "the function must be passed a labName."
-    );
-  }
-
-  return unSanLabName;
-}
 
 // All functions related to creating, requesting access
 // and managing access to labs
@@ -62,7 +39,7 @@ export const createLab = onCall(async (request) => {
       id: sanLabName,
       name: unSanLabName,
       owner: userSID,
-      sop: "",
+      sopName: "",
       users: [{id: userSID, email: userEmail, approved: true}],
     });
   }

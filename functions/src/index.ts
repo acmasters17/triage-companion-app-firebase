@@ -7,6 +7,7 @@ import {
   removeUserFromLab,
 } from "./lab-management";
 import * as admin from "firebase-admin";
+import {updateUploadedSOPName, getUploadedSOPName} from "./sop-management";
 
 // initialise firebase
 admin.initializeApp();
@@ -19,4 +20,6 @@ export {
   getLabUsers,
   approveUserInLab,
   removeUserFromLab,
+  updateUploadedSOPName,
+  getUploadedSOPName,
 };
