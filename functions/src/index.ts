@@ -7,7 +7,7 @@ import {
   removeUserFromLab,
 } from "./lab-management";
 import * as admin from "firebase-admin";
-import { updateUploadedSOPName, getUploadedSOPName } from "./sop-management";
+import {updateUploadedSOPName, getUploadedSOPName} from "./sop-management";
 import {
   updateKitChecklist,
   getKitChecklist,

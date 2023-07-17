@@ -1,6 +1,6 @@
-import { HttpsError, onCall } from "firebase-functions/v2/https";
-import { userLoggedInAndLabNameExists } from "./auth-utilities";
-import { getFirestore } from "firebase-admin/firestore";
+import {HttpsError, onCall} from "firebase-functions/v2/https";
+import {userLoggedInAndLabNameExists} from "./auth-utilities";
+import {getFirestore} from "firebase-admin/firestore";
 
 // get kit checklist
 export const getKitChecklist = onCall(async (request) => {
@@ -23,7 +23,7 @@ export const getKitChecklist = onCall(async (request) => {
   if (docSnapshot.exists) {
     const kitChecklist: [string] = docSnapshot.get("kitChecklist");
 
-    return { kitChecklist: kitChecklist };
+    return {kitChecklist: kitChecklist};
   } else {
     // if doesnt exist throw an error
     throw new HttpsError(
@@ -65,10 +65,9 @@ export const updateKitChecklist = onCall(async (request) => {
 
   // if exists then update kit checklist with new one passed
   if (docSnapshot.exists) {
-
     await labReference.set({kitChecklist: newKitChecklist}, {merge: true});
 
-    return { success: true };
+    return {success: true};
   } else {
     // if doesnt exist throw an error
     throw new HttpsError(
