@@ -3,7 +3,7 @@ import {userLoggedInAndLabNameExists} from "./auth-utilities";
 import {getFirestore} from "firebase-admin/firestore";
 
 // get kit checklist
-export const getKitChecklist = onCall(async (request) => {
+export const getLabKitChecklist = onCall(async (request) => {
   // call prerequistes to check that the request is valid
   // will throw an error otherwise
   const unSanLabName = userLoggedInAndLabNameExists(request);
