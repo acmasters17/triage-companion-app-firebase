@@ -10,7 +10,7 @@ import * as admin from "firebase-admin";
 import {updateUploadedSOPName, getUploadedSOPName} from "./sop-management";
 import {
   updateKitChecklist,
-  getLabKitChecklist,
+  getKitChecklist,
 } from "./kit-checklist-management";
 
 // initialise firebase
@@ -27,5 +27,5 @@ export {
   updateUploadedSOPName,
   getUploadedSOPName,
   updateKitChecklist,
-  getLabKitChecklist,
+  getKitChecklist,
 };
