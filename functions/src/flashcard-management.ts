@@ -3,7 +3,7 @@ import {userLoggedInAndLabNameExists} from "./auth-utilities";
 import {getFirestore} from "firebase-admin/firestore";
 
 // get flash cards
-export const getFlashCardsChecklist = onCall(async (request) => {
+export const getFlashCards = onCall(async (request) => {
   // call prerequistes to check that the request is valid
   // will throw an error otherwise
   const unSanLabName = userLoggedInAndLabNameExists(request);
@@ -34,7 +34,7 @@ export const getFlashCardsChecklist = onCall(async (request) => {
 });
 
 // update flashcards
-export const updateFlashCardsChecklist = onCall(async (request) => {
+export const updateFlashCards = onCall(async (request) => {
   // call prerequistes to check that the request is valid
   // will throw an error otherwise
   const unSanLabName = userLoggedInAndLabNameExists(request);

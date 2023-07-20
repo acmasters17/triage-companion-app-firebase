@@ -13,8 +13,8 @@ import {
   getKitChecklist,
 } from "./kit-checklist-management";
 import {
-  updateFlashCardsChecklist,
-  getFlashCardsChecklist,
+  updateFlashCards,
+  getFlashCards,
 } from "./flashcard-management";
 
 // initialise firebase
@@ -32,6 +32,6 @@ export {
   getUploadedSOPName,
   updateKitChecklist,
   getKitChecklist,
-  updateFlashCardsChecklist,
-  getFlashCardsChecklist,
+  updateFlashCards,
+  getFlashCards,
 };

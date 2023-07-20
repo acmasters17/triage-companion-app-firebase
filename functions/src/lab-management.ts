@@ -40,6 +40,7 @@ export const createLab = onCall(async (request) => {
       name: unSanLabName,
       owner: userSID,
       kitChecklist: [],
+      flashCards: [],
       sopName: "",
       users: [{id: userSID, email: userEmail, approved: true}],
     });
