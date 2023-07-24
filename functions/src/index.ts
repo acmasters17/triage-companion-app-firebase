@@ -12,10 +12,11 @@ import {
   updateKitChecklist,
   getKitChecklist,
 } from "./kit-checklist-management";
+import {updateFlashCards, getFlashCards} from "./flashcard-management";
 import {
-  updateFlashCards,
-  getFlashCards,
-} from "./flashcard-management";
+  updateTechTriageChecklist,
+  getTechTriageChecklist,
+} from "./technical-triage-checklist-management";
 
 // initialise firebase
 admin.initializeApp();
@@ -34,4 +35,6 @@ export {
   getKitChecklist,
   updateFlashCards,
   getFlashCards,
+  updateTechTriageChecklist,
+  getTechTriageChecklist,
 };

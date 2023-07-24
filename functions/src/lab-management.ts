@@ -42,6 +42,7 @@ export const createLab = onCall(async (request) => {
       kitChecklist: [],
       flashCards: [],
       sopName: "",
+      technicalTriageChecklist: [],
       users: [{id: userSID, email: userEmail, approved: true}],
     });
   }
