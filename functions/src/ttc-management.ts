@@ -3,7 +3,7 @@ import {userLoggedInAndLabNameExists} from "./auth-utilities";
 import {getFirestore} from "firebase-admin/firestore";
 
 // get technicalTriageChecklist
-export const getTechTriageChecklist = onCall(async (request) => {
+export const getTTChecklist = onCall(async (request) => {
   // call prerequistes to check that the request is valid
   // will throw an error otherwise
   const unSanLabName = userLoggedInAndLabNameExists(request);
@@ -36,12 +36,12 @@ export const getTechTriageChecklist = onCall(async (request) => {
 });
 
 // update techTriageChecklist
-export const updateTechTriageChecklist = onCall(async (request) => {
+export const updateTTChecklist = onCall(async (request) => {
   // call prerequistes to check that the request is valid
   // will throw an error otherwise
   const unSanLabName = userLoggedInAndLabNameExists(request);
 
-  const newTechnicalTriageChecklist = request.data.technicalTriageChecklist;
+  const newTechnicalTriageChecklist = request.data.newTechnicalTriageChecklist;
 
   if (!Array.isArray(newTechnicalTriageChecklist)) {
     // Throwing an HttpsError so that the client gets the error details.
@@ -74,7 +74,7 @@ export const updateTechTriageChecklist = onCall(async (request) => {
     // if doesnt exist throw an error
     throw new HttpsError(
       "not-found",
-      "Sorry this lab name doesn't exist - please request help from developer"
+      "Sorry this lab name doesn't exist - please request help from support"
     );
   }
 });

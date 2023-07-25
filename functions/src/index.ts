@@ -14,9 +14,9 @@ import {
 } from "./kit-checklist-management";
 import {updateFlashCards, getFlashCards} from "./flashcard-management";
 import {
-  updateTechTriageChecklist,
-  getTechTriageChecklist,
-} from "./technical-triage-checklist-management";
+  getTTChecklist,
+  updateTTChecklist,
+} from "./ttc-management";
 
 // initialise firebase
 admin.initializeApp();
@@ -35,6 +35,6 @@ export {
   getKitChecklist,
   updateFlashCards,
   getFlashCards,
-  updateTechTriageChecklist,
-  getTechTriageChecklist,
+  updateTTChecklist,
+  getTTChecklist,
 };
