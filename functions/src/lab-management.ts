@@ -42,7 +42,12 @@ export const createLab = onCall(async (request) => {
       kitChecklist: [],
       flashCards: [],
       sopName: "",
-      technicalTriageChecklist: [],
+      technicalTriageChecklist: [
+        {categoryName: "Smartphones", list: []},
+        {categoryName: "Tablets", list: []},
+        {categoryName: "Laptops", list: []},
+        {categoryName: "Other", list: []},
+      ],
       users: [{id: userSID, email: userEmail, approved: true}],
     });
   }
